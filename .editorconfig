@@ -1,0 +1,13 @@
+root = true
+
+[*.cs]
+# Use var only when the type is obvious
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = false:suggestion
+
+# Require XML doc comments on public members
+dotnet_diagnostic.CS1591.severity = warning
+
+# Flag unused using directives as warnings
+dotnet_diagnostic.IDE0005.severity = warning

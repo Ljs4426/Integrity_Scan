@@ -1,0 +1,83 @@
+name: Build Release (Windows)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: Build (Windows)
+    runs-on: windows-latest
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore NuGet packages
+        run: dotnet restore
+
+      - name: Build Release
+        run: dotnet build 327TH_HB_AC.csproj --configuration Release
+
+      - name: Run tests if present
+        shell: powershell
+        run: |
+          $testProjects = Get-ChildItem -Path $PWD -Recurse -Include *.csproj | Where-Object { Select-String -Path $_.FullName -Pattern '<IsTestProject>true</IsTestProject>' -Quiet }
+          if ($testProjects) {
+            Write-Host "Found test projects, running dotnet test"
+            dotnet test --no-build --configuration Release
+          } else {
+            Write-Host "No test projects found, skipping tests"
+          }
+
+  static-analysis:
+    name: Static Analysis (Windows)
+    runs-on: windows-latest
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore NuGet packages
+        run: dotnet restore
+
+      - name: Run static analysis (treat warnings as errors)
+        run: dotnet build 327TH_HB_AC.csproj --configuration Release -warnaserror
+
+  package:
+    name: Package and Upload
+    runs-on: windows-latest
+    needs: [ build, static-analysis ]
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Upload Release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 327TH-HB-AC-Release
+          path: bin/Release/net8.0-windows/**
+          retention-days: 30
