@@ -28,7 +28,7 @@ jobs:
         run: dotnet restore
 
       - name: Build Release
-        run: dotnet build --configuration Release
+        run: dotnet build 327TH_HB_AC.csproj --configuration Release
 
       - name: Verify embedded build hash
         shell: powershell
@@ -81,7 +81,7 @@ jobs:
         run: dotnet restore
 
       - name: Run static analysis (treat warnings as errors)
-        run: dotnet build --configuration Release -warnaserror
+        run: dotnet build 327TH_HB_AC.csproj --configuration Release -warnaserror
 
   package:
     name: Package and Upload
