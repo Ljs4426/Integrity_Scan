@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <Resource Include="Resources\logo.png" />
+    <Resource Include="Resources\Theme.xaml" />
   </ItemGroup>
 
   <ItemGroup>
