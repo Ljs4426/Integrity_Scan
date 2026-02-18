@@ -18,6 +18,10 @@ namespace Hawkbat.Config
         /// This value is populated into a generated file during the build process.
         /// If missing, the generated file contains the placeholder value "PENDING".
         /// </summary>
+#if !DISABLE_ANTI_TAMPER
         public static string BuildTimeHash => BuildTimeHashHolder.BuildTimeHash;
+#else
+        public static string BuildTimeHash => "PENDING";
+#endif
     }
 }
