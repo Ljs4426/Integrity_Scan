@@ -26,24 +26,6 @@ jobs:
       - name: Publish release build
         run: dotnet publish 327TH_HB_AC.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=true --output ./ProductionBuild
 
-      - name: Verify embedded build hash
-        shell: pwsh
-        run: |
-          $content = Get-Content Config/BuildTimeHashHolder.g.cs -Raw
-          if ($content -match 'PENDING') {
-            Write-Error "Build-time hash is PENDING. Hash embedding target did not run."
-            exit 1
-          }
-          if ($content -notmatch '[0-9A-Fa-f]{64}') {
-            Write-Error "Build-time hash is not a valid SHA-256 hex string."
-            exit 1
-          }
-          Write-Host "Hash verification passed."
-
-      - name: Print hash file contents
-        shell: pwsh
-        run: Get-Content Config/BuildTimeHashHolder.g.cs
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:

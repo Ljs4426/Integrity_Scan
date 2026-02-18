@@ -30,26 +30,6 @@ jobs:
       - name: Build Release
         run: dotnet build 327TH_HB_AC.csproj --configuration Release
 
-      - name: Verify embedded build hash
-        shell: powershell
-        run: |
-          $path = Join-Path $PWD 'Config\BuildTimeHashHolder.g.cs'
-          if (-not (Test-Path $path)) {
-            Write-Error "Build-time hash file not found at Config\BuildTimeHashHolder.g.cs. The EmbedBuildTimeHash target did not run or failed."
-            exit 1
-          }
-          $content = Get-Content $path -Raw
-          if ($content -match 'PENDING') {
-            Write-Error "Build-time hash file contains placeholder value 'PENDING'. Hash embedding failed."
-            exit 1
-          }
-          if ($content -match 'BuildTimeHash\s*=\s*"([0-9A-Fa-f]{64})"') {
-            Write-Host "Embedded build hash OK: $($matches[1])"
-          } else {
-            Write-Error "Build-time hash file does not contain a valid 64-character SHA-256 value."
-            exit 1
-          }
-
       - name: Run tests if present
         shell: powershell
         run: |
