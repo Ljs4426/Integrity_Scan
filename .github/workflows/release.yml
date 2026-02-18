@@ -39,13 +39,25 @@ jobs:
           }
           Write-Host "EXE found. Size: $((Get-Item './ProductionBuild/327TH_HB_AC.exe').Length / 1MB) MB"
 
+      - name: Create ZIP archive
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "./ProductionBuild/*" -DestinationPath "./327TH_HB_AC.zip" -Force
+          Write-Host "ZIP created. Size: $((Get-Item './327TH_HB_AC.zip').Length / 1MB) MB"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ github.ref_name }}
-          draft: true
+          draft: false
           body: |
             327th Hawkbat Recording Policy — ${{ github.ref_name }}
             
-            Download the EXE below and run as Administrator.
-          files: ./ProductionBuild/327TH_HB_AC.exe
+            **Download and Installation:**
+            1. Download `327TH_HB_AC.zip`
+            2. Extract to any folder
+            3. Run `327TH_HB_AC.exe` as Administrator
+            
+            All required files are included in the ZIP.
+          files: |
+            ./327TH_HB_AC.zip
