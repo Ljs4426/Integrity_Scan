@@ -1,0 +1,12 @@
+<Window x:Class="Hawkbat.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="327th Hawkbat - Recording Policy"
+        Width="1000" Height="700" WindowStartupLocation="CenterScreen"
+        Icon="/Resources/logo.png"
+        BorderBrush="Black" BorderThickness="1">
+
+    <Grid>
+        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
+    </Grid>
+</Window>

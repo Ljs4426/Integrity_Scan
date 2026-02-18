@@ -1,0 +1,81 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Hawkbat</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <!-- Static analysis and code style enforcement -->
+  <PropertyGroup>
+    <!-- Use the latest analysis rules -->
+    <AnalysisLevel>latest</AnalysisLevel>
+    <!-- Enforce code style rules during build -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <!-- Treat warnings as errors to ensure code quality. Suppress known non-actionable warnings via NoWarn. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Suppress specific warnings that are expected in this codebase and not actionable:
+         CS8618: Non-nullable field is uninitialized. Fields are sometimes set after construction by the framework or DI.
+    -->
+    <NoWarn>CS8618;IDE0005</NoWarn> <!-- Suppress IDE0005; unused usings are handled by the editor, not the build. -->
+    <!-- Generate documentation file for code analysis -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DefineConstants>DISABLE_ANTI_TAMPER</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\RecordingPolicy.ps1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.0" />
+  </ItemGroup>
+
+  <!-- After building in non-debug builds, compute the SHA-256 hash of the output
+       and write a generated Config/BuildTimeHashHolder.g.cs file containing that
+       hash. This target is skipped in Debug where DISABLE_ANTI_TAMPER is defined. -->
+  <Target Name="EmbedBuildTimeHash" AfterTargets="Publish" Condition=" '$(DefineConstants)' != 'DISABLE_ANTI_TAMPER' ">
+    <!-- Step 1: Create a temp PowerShell script by writing lines -->
+    <PropertyGroup>
+      <HashScriptContent>
+$publishDir = "$(PublishDir)".TrimEnd('\')
+$projDir = "$(ProjectDir)".TrimEnd('\')
+$exePath = [System.IO.Path]::Combine($publishDir, '327TH_HB_AC.exe')
+$outputPath = [System.IO.Path]::Combine($projDir, 'Config', 'BuildTimeHashHolder.g.cs')
+
+if (-not (Test-Path $exePath)) {
+    Write-Error "Executable not found at: $exePath"
+    exit 1
+}
+
+$hash = (Get-FileHash $exePath -Algorithm SHA256).Hash
+$nl = [Environment]::NewLine
+$content = "namespace Hawkbat.Config$nl{$nl    // AUTO-GENERATED FILE. Do not edit by hand.$nl    internal static class BuildTimeHashHolder$nl    {$nl        public const string BuildTimeHash = `"$hash`";$nl    }$nl}"
+
+Set-Content -Path $outputPath -Value $content
+      </HashScriptContent>
+    </PropertyGroup>
+    <WriteLinesToFile
+        File="$(ProjectDir)obj\embed-hash-temp.ps1"
+        Lines="$([System.Text.RegularExpressions.Regex]::Split('$(HashScriptContent)', '[\r\n]+'))"
+        Overwrite="true" />
+    <!-- Step 2: Execute the temp script -->
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)obj\embed-hash-temp.ps1&quot;" />
+    <!-- Step 3: Clean up -->
+    <Delete Files="$(ProjectDir)obj\embed-hash-temp.ps1" />
+  </Target>
+
+</Project>
