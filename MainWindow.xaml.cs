@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Windows;
 using Hawkbat.Views;
 using Hawkbat.Services;
@@ -16,12 +18,23 @@ namespace Hawkbat
         /// </summary>
         public MainWindow()
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            _sessionManager = new SessionManager();
+                _sessionManager = new SessionManager();
 
-            // Navigate to username entry on startup.
-            MainFrame.Navigate(new UsernamePage(_sessionManager, NavigateToTerms));
+                // Navigate to username entry on startup.
+                MainFrame.Navigate(new UsernamePage(_sessionManager, NavigateToTerms));
+            }
+            catch (Exception ex)
+            {
+                string crashLog = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                    "327HB_crash.txt");
+                File.WriteAllText(crashLog, ex.ToString());
+                throw;
+            }
         }
 
         private void NavigateToTerms()
