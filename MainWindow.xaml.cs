@@ -83,6 +83,7 @@ namespace Hawkbat
 
             // Navigate to terms (shown in blue)
             LogDiagnostic("About to navigate to terms page");
+            await System.Threading.Tasks.Task.CompletedTask;
             MainFrame.Dispatcher.Invoke(() =>
             {
                 LogDiagnostic("Resetting theme to blue for Terms page");

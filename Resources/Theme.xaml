@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
   <!-- Dynamic color brushes that can be changed at runtime by ThemeManager -->
-  <SolidColorBrush x:Key="AccentColor" Color="#FF3D1A6E" />
+  <SolidColorBrush x:Key="AccentColor" Color="#0078D4" />
   <SolidColorBrush x:Key="BackgroundColor" Color="#FF0A0A0F" />
   <SolidColorBrush x:Key="TextColor" Color="#FFFFFFFF" />
 
@@ -12,7 +12,7 @@
 
   <!-- Direct brush references (use the brushes directly, they're already SolidColorBrush) -->
   <!-- These are redundant since we have AccentColor, BackgroundColor, TextColor already defined above as brushes -->
-  <SolidColorBrush x:Key="AccentBrush" Color="#FF3D1A6E" />
+  <SolidColorBrush x:Key="AccentBrush" Color="#0078D4" />
   <SolidColorBrush x:Key="PanelBrush" Color="#FF0F0F14" />
   <SolidColorBrush x:Key="TextBrush" Color="#FFFFFFFF" />
   <SolidColorBrush x:Key="MutedTextBrush" Color="#FF9A9AA0" />
