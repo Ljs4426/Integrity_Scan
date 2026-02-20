@@ -13,28 +13,35 @@
 
   <!-- Static analysis and code style enforcement -->
   <PropertyGroup>
-    <!-- Use the latest analysis rules -->
     <AnalysisLevel>latest</AnalysisLevel>
-    <!-- Enforce code style rules during build -->
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <!-- Treat warnings as errors to ensure code quality. Suppress known non-actionable warnings via NoWarn. -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <!-- Suppress specific warnings that are expected in this codebase and not actionable:
-         CS8618: Non-nullable field is uninitialized. Fields are sometimes set after construction by the framework or DI.
-    -->
-    <NoWarn>CS8618;IDE0005</NoWarn> <!-- Suppress IDE0005; unused usings are handled by the editor, not the build. -->
-    <!-- Generate documentation file for code analysis -->
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>CS8618;IDE0005;CS1591</NoWarn>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
     <Resource Include="Resources\logo.png" />
+    <Resource Include="Resources\logo.svg" />
     <Resource Include="Resources\Theme.xaml" />
   </ItemGroup>
 
+  <!-- Unit pack content files (copied to output next to EXE) -->
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\RecordingPolicy.ps1" />
+    <Content Include="Units\**\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
+
+  <!-- Custom target to copy Units folder to publish directory -->
+  <Target Name="CopyUnitsToPublish" AfterTargets="Publish">
+    <ItemGroup>
+      <UnitsFiles Include="$(ProjectDir)Units\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(UnitsFiles)" DestinationFolder="$(PublishDir)Units\%(RecursiveDir)" />
+    <Message Importance="high" Text="Copied Units folder to $(PublishDir)Units" />
+  </Target>
 
   <ItemGroup>
     <PackageReference Include="System.Management" Version="8.0.0" />

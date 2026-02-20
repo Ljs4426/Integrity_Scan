@@ -6,9 +6,6 @@ using Hawkbat.Services;
 
 namespace Hawkbat.Services
 {
-    /// <summary>
-    /// Handles encrypted log writes and in-memory formatting for UI.
-    /// </summary>
     public class Logger
     {
         private readonly SessionManager _session;
@@ -17,10 +14,6 @@ namespace Hawkbat.Services
         private readonly byte[] _key;
         private readonly byte[] _iv;
 
-        /// <summary>
-        /// Create a logger and initialize an encrypted session log file.
-        /// The file is placed in %LocalAppData%\327TH_Hawkbat and named with session start time.
-        /// </summary>
         public Logger(SessionManager session)
         {
             _session = session;
@@ -29,7 +22,7 @@ namespace Hawkbat.Services
             var start = DateTime.UtcNow;
             _logPath = Path.Combine(_logDirectory, $"session_{start:yyyyMMdd_HHmmss}.logbin");
 
-            // Derive key/iv for this session and write an encrypted header block.
+            // Derive encryption keys and write header
             var (k, iv) = SecurityUtilities.DeriveKeyAndIv(_session.SessionToken);
             _key = k;
             _iv = iv;
@@ -41,7 +34,7 @@ namespace Hawkbat.Services
             }
             catch
             {
-                // Do not throw from logger creation.
+                // Do not throw from logger creation
             }
         }
 
@@ -51,16 +44,13 @@ namespace Hawkbat.Services
             var plain = Encoding.UTF8.GetBytes(payload);
             var cipher = SecurityUtilities.EncryptBlock(plain, _key, _iv);
 
-            // Prepend 4-byte length (big-endian) so the reader can split blocks.
+            // Prepend length header for block splitting
             var len = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(cipher.Length));
             using var fs = new FileStream(_logPath, FileMode.Append, FileAccess.Write, FileShare.Read);
             fs.Write(len, 0, len.Length);
             fs.Write(cipher, 0, cipher.Length);
         }
 
-        /// <summary>
-        /// Append a log entry with the provided message and optional severity level.
-        /// </summary>
         public void Write(string message, string level = "INFO")
         {
             try
@@ -69,13 +59,10 @@ namespace Hawkbat.Services
             }
             catch
             {
-                // Swallow to avoid UI crash.
+                // Swallow to avoid UI crash
             }
         }
 
-        /// <summary>
-        /// Write a final log entry and flush file handles. Call before exit.
-        /// </summary>
         public void WriteFinal(string message)
         {
             try

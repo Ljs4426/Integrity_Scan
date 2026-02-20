@@ -5,4 +5,5 @@ ProductionBuild/
 .vs/
 *.user
 Config/BuildTimeHashHolder.g.cs
-Scripts/embed-hash-temp.ps1
+Scripts/embed-hash-temp.ps1ProductionBuild/Units/
+TestBuild/Units/

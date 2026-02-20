@@ -12,9 +12,6 @@ using Microsoft.Win32;
 
 namespace Hawkbat.Services
 {
-    /// <summary>
-    /// Orchestrates recording policy checks and reports results through provided callbacks.
-    /// </summary>
     public class ScanEngine
     {
         private readonly SessionManager _session;
@@ -42,9 +39,6 @@ namespace Hawkbat.Services
         private const double SectionProgressIncrement = 12.5;
 
 
-        /// <summary>
-        /// Create scan engine with session manager and callbacks for logging and results.
-        /// </summary>
         public ScanEngine(SessionManager session, Action<string, string> log, Action<string, string> resultCallback, Action<double> progressCallback)
         {
             _session = session;
@@ -53,9 +47,6 @@ namespace Hawkbat.Services
             _progressCallback = progressCallback;
         }
 
-        /// <summary>
-        /// Run the full suite of scans asynchronously.
-        /// </summary>
         public async Task RunFullScanAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() => RunRecordingPolicyScript(cancellationToken), cancellationToken);
@@ -239,10 +230,19 @@ namespace Hawkbat.Services
         private void RunRecordingPolicyScript(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var tempPath = ExtractEmbeddedScriptToTemp();
+            
+            // Get script from selected unit pack
+            if (Models.SessionState.SelectedUnit?.ScriptPath == null)
+            {
+                LogOnUi("Recording Policy", "No unit selected. Cannot run script.");
+                ResultOnUi("Recording Policy Script", "FAILURE");
+                return;
+            }
+
+            var tempPath = LoadUnitScriptToTemp(Models.SessionState.SelectedUnit.ScriptPath);
             if (string.IsNullOrWhiteSpace(tempPath))
             {
-                LogOnUi("Recording Policy", "Failed to load embedded script resource.");
+                LogOnUi("Recording Policy", "Failed to load unit script resource.");
                 ResultOnUi("Recording Policy Script", "FAILURE");
                 return;
             }
@@ -269,6 +269,7 @@ namespace Hawkbat.Services
                 Arguments = $"-NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
+                RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
@@ -526,21 +527,25 @@ namespace Hawkbat.Services
             return Array.Exists(SectionOrder, s => string.Equals(s, section, StringComparison.OrdinalIgnoreCase));
         }
 
-        private string? ExtractEmbeddedScriptToTemp()
+        private string? LoadUnitScriptToTemp(string scriptPath)
         {
-            var assembly = typeof(ScanEngine).Assembly;
-            var resourceName = "Hawkbat.Scripts.RecordingPolicy.ps1";
-            using var stream = assembly.GetManifestResourceStream(resourceName);
-            if (stream == null)
+            try
             {
+                if (!File.Exists(scriptPath))
+                {
+                    return null;
+                }
+
+                var content = File.ReadAllText(scriptPath);
+                var tempPath = Path.Combine(Path.GetTempPath(), $"scan_script_{Guid.NewGuid():N}.ps1");
+                File.WriteAllText(tempPath, content);
+                return tempPath;
+            }
+            catch (Exception ex)
+            {
+                LogOnUi("Recording Policy", $"Error loading unit script: {ex.Message}");
                 return null;
             }
-
-            using var reader = new StreamReader(stream);
-            var content = reader.ReadToEnd();
-            var tempPath = Path.Combine(Path.GetTempPath(), $"RecordingPolicy_{Guid.NewGuid():N}.ps1");
-            File.WriteAllText(tempPath, content);
-            return tempPath;
         }
 
         private void TryDeleteTempFile(string path)

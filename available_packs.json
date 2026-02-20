@@ -1,0 +1,16 @@
+[
+  {
+    "name": "327th Hawkbat",
+    "folder": "327th_Hawkbat",
+    "description": "Recording Policy scan with Process Explorer",
+    "version": "1.0.0",
+    "size": "~50 KB"
+  },
+  {
+    "name": "LOCAL",
+    "folder": "LOCAL",
+    "description": "General scan tool with no unit affiliation",
+    "version": "1.0.0",
+    "size": "~50 KB"
+  }
+]

@@ -10,9 +10,6 @@ using Hawkbat.Services;
 
 namespace Hawkbat.Views
 {
-    /// <summary>
-    /// Main dashboard showing scan controls and results.
-    /// </summary>
     public partial class DashboardPage : Page
     {
         private readonly SessionManager _sessionManager;
@@ -34,24 +31,98 @@ namespace Hawkbat.Views
             public TextBlock Text { get; }
         }
 
-        /// <summary>
-        /// Create dashboard with session manager and UI callbacks.
-        /// </summary>
         public DashboardPage(SessionManager sessionManager)
         {
             InitializeComponent();
             _sessionManager = sessionManager;
-            _badges = new Dictionary<string, BadgeElements>(StringComparer.OrdinalIgnoreCase)
+            
+            // Set unit display info
+            if (Models.SessionState.SelectedUnit != null)
             {
-                { "Files + Modules", new BadgeElements(BadgeFilesModules, BadgeFilesModulesText) },
-                { "OS Check", new BadgeElements(BadgeOsCheck, BadgeOsCheckText) },
-                { "Memory Integrity", new BadgeElements(BadgeMemoryIntegrity, BadgeMemoryIntegrityText) },
-                { "Windows Defender", new BadgeElements(BadgeWindowsDefender, BadgeWindowsDefenderText) },
-                { "Exclusions", new BadgeElements(BadgeExclusions, BadgeExclusionsText) },
-                { "Threats", new BadgeElements(BadgeThreats, BadgeThreatsText) },
-                { "Binary Sig", new BadgeElements(BadgeBinarySig, BadgeBinarySigText) },
-                { "Process Explorer", new BadgeElements(BadgeProcessExplorer, BadgeProcessExplorerText) }
-            };
+                UnitNameText.Text = Models.SessionState.SelectedUnit.Name;
+                UnitSubtitleText.Text = Models.SessionState.SelectedUnit.Subtitle;
+                
+                // Apply unit accent color
+                if (!string.IsNullOrEmpty(Models.SessionState.SelectedUnit.AccentColor))
+                {
+                    try
+                    {
+                        var color = (Color)ColorConverter.ConvertFromString(Models.SessionState.SelectedUnit.AccentColor);
+                        var accentBrush = new SolidColorBrush(color);
+                        
+                        // Update accent resources
+                        this.Resources["AccentBrush"] = accentBrush;
+                        this.Resources["PanelAccentBrush"] = accentBrush;
+                        
+                        // Also directly set border brushes and progress bar
+                        ScanOutputBorder.BorderBrush = accentBrush;
+                        RightPanelBorder.BorderBrush = accentBrush;
+                        ScanProgress.Foreground = accentBrush;
+                        StartScanButton.Background = accentBrush;
+                    }
+                    catch
+                    {
+                        // Fallback to default
+                    }
+                }
+                
+                // Hide logo for units without one
+                if (!Models.SessionState.SelectedUnit.HasLogo)
+                {
+                    UnitLogo.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    UnitLogo.Source = new System.Windows.Media.Imaging.BitmapImage(
+                        new Uri(Models.SessionState.SelectedUnit.LogoPath, UriKind.RelativeOrAbsolute));
+                }
+            }
+            
+            _badges = new Dictionary<string, BadgeElements>(StringComparer.OrdinalIgnoreCase);
+            
+            // Dynamically generate scan result badges from unit configuration
+            if (Models.SessionState.SelectedUnit != null && Models.SessionState.SelectedUnit.ScanResults != null)
+            {
+                foreach (var scanResultName in Models.SessionState.SelectedUnit.ScanResults)
+                {
+                    var grid = new Grid { Margin = new Thickness(0, ScanResultsPanel.Children.Count == 0 ? 2 : 6, 0, 0) };
+                    grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                    grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                    var label = new TextBlock
+                    {
+                        Text = scanResultName,
+                        Foreground = (Brush)FindResource("TextBrush"),
+                        FontSize = 11
+                    };
+                    Grid.SetColumn(label, 0);
+                    grid.Children.Add(label);
+
+                    var badge = new Border
+                    {
+                        Background = (Brush)FindResource("PendingBrush"),
+                        CornerRadius = new CornerRadius(8),
+                        Padding = new Thickness(8, 2, 8, 2),
+                        MinWidth = 70
+                    };
+                    Grid.SetColumn(badge, 1);
+
+                    var badgeText = new TextBlock
+                    {
+                        Text = "PENDING",
+                        Foreground = (Brush)FindResource("TextBrush"),
+                        FontSize = 10,
+                        FontWeight = FontWeights.Bold,
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    };
+
+                    badge.Child = badgeText;
+                    grid.Children.Add(badge);
+                    ScanResultsPanel.Children.Add(grid);
+
+                    _badges[scanResultName] = new BadgeElements(badge, badgeText);
+                }
+            }
 
             _statusBrushes = new Dictionary<string, Brush>(StringComparer.OrdinalIgnoreCase)
             {
@@ -135,6 +206,8 @@ namespace Hawkbat.Views
                 _scanCts?.Dispose();
                 _scanCts = null;
                 StartScanButton.Content = "Start Scan";
+                // Restore accent color
+                StartScanButton.Background = (Brush)FindResource("AccentBrush");
                 StartScanButton.Background = (Brush)FindResource("AccentBrush");
             }
         }
@@ -216,6 +289,14 @@ namespace Hawkbat.Views
                 "PENDING" => "PENDING",
                 _ => normalized
             };
+        }
+        private void OnAddUnitPacks(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Window.GetWindow(this) as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.NavigateToUnitSelection();
+            }
         }
     }
 }

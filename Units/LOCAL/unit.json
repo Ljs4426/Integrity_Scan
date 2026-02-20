@@ -1,0 +1,14 @@
+{
+  "name": "LOCAL",
+  "subtitle": "General Scan",
+  "accentColor": "#0078D4",
+  "textColor": "#F0F0F0",
+  "backgroundColor": "#000000",
+  "hasLogo": false,
+  "requireUsername": false,
+  "version": "1.0.0",
+  "scanResults": [
+    "Script Execution",
+    "Output"
+  ]
+}

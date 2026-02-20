@@ -1,0 +1,10 @@
+LOCAL SCAN TOOL — TERMS OF SERVICE
+
+This is a general purpose local system integrity scan tool with no unit affiliation.
+
+By clicking Accept you agree that:
+
+1. This tool performs a local scan only. Nothing is deleted or transmitted.
+2. You are authorised to run administrative tools on this machine.
+3. Scan results are stored locally in encrypted log files.
+4. This tool is provided as-is with no warranty.

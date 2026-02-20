@@ -4,25 +4,32 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using Hawkbat.Services;
+using Hawkbat.Models;
 
 namespace Hawkbat.Views
 {
-    /// <summary>
-    /// Page where user enters their username. The plaintext username is never stored.
-    /// </summary>
     public partial class UsernamePage : Page
     {
         private readonly SessionManager _sessionManager;
         private readonly Action _onContinue;
 
-        /// <summary>
-        /// Create the page with session manager and continuation action.
-        /// </summary>
         public UsernamePage(SessionManager sessionManager, Action onContinue)
         {
             InitializeComponent();
             _sessionManager = sessionManager;
             _onContinue = onContinue;
+            
+            // Apply unit colors
+            this.Loaded += (s, e) => ApplyUnitColors();
+        }
+
+        private void ApplyUnitColors()
+        {
+            // Apply selected unit's colors
+            if (Models.SessionState.SelectedUnit != null)
+            {
+                ThemeManager.ApplyUnitTheme(Models.SessionState.SelectedUnit);
+            }
         }
 
         private void OnContinueClicked(object sender, RoutedEventArgs e)
@@ -34,11 +41,15 @@ namespace Hawkbat.Views
                 return;
             }
 
-            // Hash username with SHA-256 and store only the hash.
+            // Hash and store username
             using var sha = SHA256.Create();
             var bytes = Encoding.UTF8.GetBytes(username);
             var hash = sha.ComputeHash(bytes);
-            _sessionManager.SetUsernameHash(BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant());
+            var hashedUsername = BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
+            
+            // Store in both SessionManager (for backward compatibility) and SessionState
+            _sessionManager.SetUsernameHash(hashedUsername);
+            SessionState.HashedUsername = hashedUsername;
 
             _onContinue?.Invoke();
         }

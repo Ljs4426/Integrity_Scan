@@ -1,26 +1,39 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using Hawkbat.Models;
 using Hawkbat.Services;
 
 namespace Hawkbat.Views
 {
-    /// <summary>
-    /// Terms of Service acceptance page. User must accept to continue.
-    /// </summary>
     public partial class TermsPage : Page
     {
         private readonly SessionManager _sessionManager;
         private readonly Action _onAccepted;
 
-        /// <summary>
-        /// Create the page with session manager and continuation action.
-        /// </summary>
         public TermsPage(SessionManager sessionManager, Action onAccepted)
         {
             InitializeComponent();
             _sessionManager = sessionManager;
             _onAccepted = onAccepted;
+            LoadUnitTermsOfService();
+        }
+
+        private void LoadUnitTermsOfService()
+        {
+            var unit = SessionState.SelectedUnit;
+            if (unit != null)
+            {
+                // Update title with unit info
+                Title = $"Terms of Service — {unit.Name}";
+                
+                // Load ToS text
+                var termsTextBlock = TermsScroll.Content as TextBlock;
+                if (termsTextBlock != null)
+                {
+                    termsTextBlock.Text = unit.TosText;
+                }
+            }
         }
 
         private void OnTermsScroll(object sender, ScrollChangedEventArgs e)

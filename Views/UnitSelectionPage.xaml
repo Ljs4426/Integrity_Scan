@@ -1,0 +1,96 @@
+<UserControl x:Class="Hawkbat.Views.UnitSelectionPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{DynamicResource BackgroundColor}"
+             Foreground="{DynamicResource TextColor}"
+             Loaded="UserControl_Loaded">
+    <Grid>
+        <StackPanel Orientation="Vertical" Margin="24">
+            <!-- Installed Units Section -->
+            <TextBlock Text="Installed Units"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource TextColor}"
+                       Margin="0,0,0,12"/>
+
+            <ScrollViewer Height="280" 
+                          VerticalScrollBarVisibility="Auto"
+                          Margin="0,0,0,16">
+                <WrapPanel x:Name="UnitsPanel"
+                           Orientation="Horizontal"
+                           VerticalAlignment="Top"/>
+            </ScrollViewer>
+
+            <!-- No Units Message -->
+            <TextBlock x:Name="NoUnitsMessage"
+                       Text="No unit packs installed. Drop a unit pack zip file below."
+                       FontSize="14"
+                       TextAlignment="Center"
+                       Foreground="#999999"
+                       Margin="0,60,0,60"
+                       Visibility="Collapsed"/>
+
+            <!-- Separator Line -->
+            <Border Height="1"
+                    Background="#444444"
+                    Margin="0,16,0,16"/>
+
+            <!-- Drop Zone for Zip Files -->
+            <Border x:Name="DropZone"
+                    Height="120"
+                    BorderBrush="#0078D4"
+                    BorderThickness="2"
+                    Background="#1A1A1A"
+                    CornerRadius="4"
+                    Margin="0,0,0,16"
+                    AllowDrop="True"
+                    Drop="OnDropZone"
+                    DragOver="OnDragOver"
+                    DragLeave="OnDragLeave">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="📦 Drop Unit Pack Zip Here"
+                               FontSize="16"
+                               FontWeight="Bold"
+                               Foreground="#0078D4"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="or"
+                               FontSize="12"
+                               Foreground="#999999"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,8"/>
+                    <Button x:Name="BrowseButton"
+                            Content="Browse Files"
+                            Click="OnBrowseClicked"
+                            Background="#0078D4"
+                            Foreground="White"
+                            Padding="16,8"
+                            BorderThickness="0"
+                            Cursor="Hand"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Status Message -->
+            <TextBlock x:Name="StatusMessage"
+                       FontSize="12"
+                       Foreground="#0078D4"
+                       Margin="0,0,0,16"
+                       TextAlignment="Center"
+                       Visibility="Collapsed"/>
+
+            <!-- Download More Units Link -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
+                <TextBlock Text="Need more units? "
+                           FontSize="12"
+                           Foreground="#999999"
+                           VerticalAlignment="Center"/>
+                <TextBlock VerticalAlignment="Center">
+                    <Hyperlink Click="OnDownloadMoreClicked"
+                               Foreground="#0078D4">
+                        <Run Text="Download from GitHub"/>
+                    </Hyperlink>
+                </TextBlock>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

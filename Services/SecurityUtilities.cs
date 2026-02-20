@@ -6,17 +6,11 @@ using Microsoft.Win32;
 
 namespace Hawkbat.Services
 {
-    /// <summary>
-    /// Security-related helper methods: AES encryption, hashing, anti-tamper, and machine identifier utilities.
-    /// </summary>
     public static class SecurityUtilities
     {
         private const int KeySize = 32;
         private const int IvSize = 16;
 
-        /// <summary>
-        /// Derive AES key and IV for a session using the session token and machine identifier.
-        /// </summary>
         public static (byte[] Key, byte[] IV) DeriveKeyAndIv(string sessionToken)
         {
             var machineGuid = GetMachineGuid();
@@ -26,9 +20,6 @@ namespace Hawkbat.Services
             return (key, iv);
         }
 
-        /// <summary>
-        /// Encrypt a plaintext block with the provided key and IV using AES-256-CBC.
-        /// </summary>
         public static byte[] EncryptBlock(byte[] plaintext, byte[] key, byte[] iv)
         {
             using var aes = Aes.Create();
@@ -44,9 +35,6 @@ namespace Hawkbat.Services
             return ms.ToArray();
         }
 
-        /// <summary>
-        /// Read the machine GUID from the registry for key derivation.
-        /// </summary>
         public static string GetMachineGuid()
         {
             try
@@ -61,9 +49,6 @@ namespace Hawkbat.Services
             }
         }
 
-        /// <summary>
-        /// Compute SHA-256 hash of a file.
-        /// </summary>
         public static string ComputeFileHash(string path)
         {
             using var sha = SHA256.Create();
@@ -72,9 +57,6 @@ namespace Hawkbat.Services
             return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
         }
 
-        /// <summary>
-        /// Check for debugger presence using Win32 API.
-        /// </summary>
         public static bool IsNativeDebuggerPresent()
         {
             return NativeMethods.IsDebuggerPresent();

@@ -5,9 +5,8 @@
       Title="Dashboard">
 
   <Page.Resources>
-    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#0A0A0F" />
-    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#11111A" />
-    <SolidColorBrush x:Key="AccentBrush" Color="#3D1A6E" />
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#000000" />
+    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#0A0A0A" />
     <SolidColorBrush x:Key="TextBrush" Color="#FFFFFF" />
     <SolidColorBrush x:Key="MutedTextBrush" Color="#8A8A97" />
     <SolidColorBrush x:Key="PendingBrush" Color="#3A3A44" />
@@ -17,7 +16,7 @@
     <SolidColorBrush x:Key="StopBrush" Color="#8B0000" />
 
     <Style x:Key="PrimaryButton" TargetType="Button">
-      <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+      <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
       <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
       <Setter Property="BorderThickness" Value="0" />
       <Setter Property="Padding" Value="10,6" />
@@ -40,7 +39,7 @@
       <ColumnDefinition Width="35*" />
     </Grid.ColumnDefinitions>
 
-    <Border Grid.Column="0" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,12,0">
+    <Border x:Name="ScanOutputBorder" Grid.Column="0" Background="{StaticResource AppBackgroundBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,12,0">
       <Grid>
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto" />
@@ -52,117 +51,37 @@
       </Grid>
     </Border>
 
-    <Border Grid.Column="1" Background="{StaticResource PanelBackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" CornerRadius="8" Padding="12">
+    <Border x:Name="RightPanelBorder" Grid.Column="1" Background="{StaticResource PanelBackgroundBrush}" BorderThickness="1" CornerRadius="8" Padding="12">
       <DockPanel LastChildFill="True">
-        <TextBlock DockPanel.Dock="Bottom" Text="{x:Static config:AppConfig.CurrentVersion}" Foreground="{StaticResource MutedTextBrush}" FontSize="10" HorizontalAlignment="Center" Margin="0,8,0,0" />
+        <!-- Version at bottom -->
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical">
+          <Button x:Name="AddUnitPacksButton" Content="Add Unit Packs" Foreground="{StaticResource MutedTextBrush}" 
+                  Background="Transparent" BorderThickness="0" FontSize="10" Cursor="Hand" 
+                  Click="OnAddUnitPacks" Padding="0,4" />
+          <TextBlock Text="{x:Static config:AppConfig.CurrentVersion}" Foreground="{StaticResource MutedTextBrush}" FontSize="10" HorizontalAlignment="Center" Margin="0,8,0,0" />
+        </StackPanel>
 
         <StackPanel>
-          <Image Source="/Resources/logo.png" MaxHeight="80" HorizontalAlignment="Center" Stretch="Uniform" />
-          <Border Height="1" Background="{StaticResource AccentBrush}" Margin="0,8,0,8" />
-          <TextBlock Text="327th Hawkbat" Foreground="{StaticResource TextBrush}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" />
-          <TextBlock Text="Recording Policy" Foreground="{StaticResource AccentBrush}" FontSize="12" HorizontalAlignment="Center" Margin="0,2,0,0" />
-          <Border Height="1" Background="{StaticResource AccentBrush}" Margin="0,8,0,8" />
+          <Image x:Name="UnitLogo" Source="/Resources/logo.png" MaxHeight="80" HorizontalAlignment="Center" Stretch="Uniform" />
+          <Border Height="1" Background="{DynamicResource AccentBrush}" Margin="0,8,0,8" />
+          <TextBlock x:Name="UnitNameText" Text="Unit Name" Foreground="{StaticResource TextBrush}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" />
+          <TextBlock x:Name="UnitSubtitleText" Text="Subtitle" Foreground="{DynamicResource AccentBrush}" FontSize="12" HorizontalAlignment="Center" Margin="0,2,0,0" />
+          <Border Height="1" Background="{DynamicResource AccentBrush}" Margin="0,8,0,8" />
 
           <Button x:Name="StartScanButton" Content="Start Scan" Style="{StaticResource PrimaryButton}" Click="OnStartScan" />
 
-          <Border Height="1" Background="{StaticResource AccentBrush}" Margin="0,8,0,8" />
+          <Border Height="1" Background="{DynamicResource AccentBrush}" Margin="0,8,0,8" />
           <TextBlock Text="Scan Results" Foreground="{StaticResource TextBrush}" FontSize="11" FontWeight="Bold" Margin="0,0,0,6" />
 
-          <StackPanel>
-            <Grid Margin="0,2,0,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBlock Text="Files + Modules" Foreground="{StaticResource TextBrush}" FontSize="11" />
-              <Border x:Name="BadgeFilesModules" Grid.Column="1" Background="{StaticResource PendingBrush}" CornerRadius="8" Padding="8,2" MinWidth="70">
-                <TextBlock x:Name="BadgeFilesModulesText" Text="PENDING" Foreground="{StaticResource TextBrush}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" />
-              </Border>
-            </Grid>
-
-            <Grid Margin="0,6,0,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBlock Text="OS Check" Foreground="{StaticResource TextBrush}" FontSize="11" />
-              <Border x:Name="BadgeOsCheck" Grid.Column="1" Background="{StaticResource PendingBrush}" CornerRadius="8" Padding="8,2" MinWidth="70">
-                <TextBlock x:Name="BadgeOsCheckText" Text="PENDING" Foreground="{StaticResource TextBrush}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" />
-              </Border>
-            </Grid>
-
-            <Grid Margin="0,6,0,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBlock Text="Memory Integrity" Foreground="{StaticResource TextBrush}" FontSize="11" />
-              <Border x:Name="BadgeMemoryIntegrity" Grid.Column="1" Background="{StaticResource PendingBrush}" CornerRadius="8" Padding="8,2" MinWidth="70">
-                <TextBlock x:Name="BadgeMemoryIntegrityText" Text="PENDING" Foreground="{StaticResource TextBrush}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" />
-              </Border>
-            </Grid>
-
-            <Grid Margin="0,6,0,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBlock Text="Windows Defender" Foreground="{StaticResource TextBrush}" FontSize="11" />
-              <Border x:Name="BadgeWindowsDefender" Grid.Column="1" Background="{StaticResource PendingBrush}" CornerRadius="8" Padding="8,2" MinWidth="70">
-                <TextBlock x:Name="BadgeWindowsDefenderText" Text="PENDING" Foreground="{StaticResource TextBrush}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" />
-              </Border>
-            </Grid>
-
-            <Grid Margin="0,6,0,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBlock Text="Exclusions" Foreground="{StaticResource TextBrush}" FontSize="11" />
-              <Border x:Name="BadgeExclusions" Grid.Column="1" Background="{StaticResource PendingBrush}" CornerRadius="8" Padding="8,2" MinWidth="70">
-                <TextBlock x:Name="BadgeExclusionsText" Text="PENDING" Foreground="{StaticResource TextBrush}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" />
-              </Border>
-            </Grid>
-
-            <Grid Margin="0,6,0,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBlock Text="Threats" Foreground="{StaticResource TextBrush}" FontSize="11" />
-              <Border x:Name="BadgeThreats" Grid.Column="1" Background="{StaticResource PendingBrush}" CornerRadius="8" Padding="8,2" MinWidth="70">
-                <TextBlock x:Name="BadgeThreatsText" Text="PENDING" Foreground="{StaticResource TextBrush}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" />
-              </Border>
-            </Grid>
-
-            <Grid Margin="0,6,0,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBlock Text="Binary Sig" Foreground="{StaticResource TextBrush}" FontSize="11" />
-              <Border x:Name="BadgeBinarySig" Grid.Column="1" Background="{StaticResource PendingBrush}" CornerRadius="8" Padding="8,2" MinWidth="70">
-                <TextBlock x:Name="BadgeBinarySigText" Text="PENDING" Foreground="{StaticResource TextBrush}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" />
-              </Border>
-            </Grid>
-
-            <Grid Margin="0,6,0,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBlock Text="Process Explorer" Foreground="{StaticResource TextBrush}" FontSize="11" />
-              <Border x:Name="BadgeProcessExplorer" Grid.Column="1" Background="{StaticResource PendingBrush}" CornerRadius="8" Padding="8,2" MinWidth="70">
-                <TextBlock x:Name="BadgeProcessExplorerText" Text="PENDING" Foreground="{StaticResource TextBrush}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" />
-              </Border>
-            </Grid>
+          <StackPanel x:Name="ScanResultsPanel">
+            <!-- Scan result items dynamically generated in code-behind -->
           </StackPanel>
 
           <Border Margin="0,10,0,0" Background="#1D1D27" CornerRadius="6" Height="18">
-            <ProgressBar x:Name="ScanProgress" Minimum="0" Maximum="100" Value="0" Foreground="{StaticResource AccentBrush}" Background="Transparent" BorderThickness="0" />
+            <ProgressBar x:Name="ScanProgress" Minimum="0" Maximum="100" Value="0" Foreground="{DynamicResource AccentBrush}" Background="Transparent" BorderThickness="0" />
           </Border>
 
-          <Border Height="1" Background="{StaticResource AccentBrush}" Margin="0,10,0,0" />
+          <Border Height="1" Background="{DynamicResource AccentBrush}" Margin="0,10,0,0" />
         </StackPanel>
       </DockPanel>
     </Border>

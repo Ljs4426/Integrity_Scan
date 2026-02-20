@@ -1,0 +1,45 @@
+<Page x:Class="Hawkbat.Views.Wizard.WizardWelcomePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="{DynamicResource BackgroundColor}">
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="500">
+            <!-- Accent Bar at Top -->
+            <Border Height="60"
+                    Background="{DynamicResource AccentColor}"
+                    Margin="0,0,0,32"/>
+
+            <!-- Title -->
+            <TextBlock Text="Anticheat Setup"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource TextColor}"
+                       Margin="0,0,0,8"/>
+
+            <!-- Subtitle -->
+            <TextBlock Text="Welcome"
+                       FontSize="14"
+                       Foreground="{DynamicResource AccentColor}"
+                       Margin="0,0,0,24"/>
+
+            <!-- Body Text -->
+            <TextBlock TextWrapping="Wrap"
+                       FontSize="13"
+                       Foreground="#CCCCCC"
+                       LineHeight="20"
+                       Margin="0,0,0,24">
+                <Run>Before you begin, download the unit packs you want to use.</Run>
+                <LineBreak/>
+                <LineBreak/>
+                <Run>Each unit pack contains a custom scan script, branding,</Run>
+                <LineBreak/>
+                <Run>and terms of service for a specific group or community.</Run>
+                <LineBreak/>
+                <LineBreak/>
+                <Run>You only need to do this once. You can always download</Run>
+                <LineBreak/>
+                <Run>more unit packs later from the main menu.</Run>
+            </TextBlock>
+        </StackPanel>
+    </Grid>
+</Page>

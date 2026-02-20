@@ -1,17 +1,13 @@
 <Page x:Class="Hawkbat.Views.TermsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="{DynamicResource BackgroundColor}"
       Title="Terms of Service">
 
   <Page.Resources>
-    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#0A0A0F" />
-    <SolidColorBrush x:Key="AccentBrush" Color="#3D1A6E" />
-    <SolidColorBrush x:Key="TextBrush" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="MutedTextBrush" Color="#8A8A97" />
-    <SolidColorBrush x:Key="DeclineBrush" Color="#8B0000" />
-
     <Style x:Key="ActionButton" TargetType="Button">
-      <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource TextColor}" />
+      <Setter Property="Background" Value="{DynamicResource AccentColor}" />
       <Setter Property="BorderThickness" Value="0" />
       <Setter Property="Padding" Value="10,6" />
       <Setter Property="FontWeight" Value="SemiBold" />
@@ -27,15 +23,14 @@
     </Style>
   </Page.Resources>
 
-  <Grid Background="{StaticResource AppBackgroundBrush}">
+  <Grid Background="{DynamicResource BackgroundColor}">
     <StackPanel Margin="24" VerticalAlignment="Center" HorizontalAlignment="Center" Width="820">
-      <Image Source="/Resources/logo.png" MaxHeight="80" HorizontalAlignment="Center" Stretch="Uniform" Margin="0,0,0,12" />
-      <TextBlock Text="Terms of Service" FontSize="20" FontWeight="Bold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,8" HorizontalAlignment="Center" />
+      <Image Source="/Resources/logo.svg" MaxHeight="80" HorizontalAlignment="Center" Stretch="Uniform" Margin="0,0,0,12" />
+      <TextBlock Text="Terms of Service - Integrity Check Tool" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextColor}" Margin="0,0,0,8" HorizontalAlignment="Center" />
+      <Border Height="1" Background="{DynamicResource AccentColor}" Margin="0,0,0,12" />
 
       <ScrollViewer x:Name="TermsScroll" Height="380" Width="800" VerticalScrollBarVisibility="Auto" ScrollChanged="OnTermsScroll">
-        <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextBrush}" xml:space="preserve">
-Here's your ToS — replace the placeholder in Views\TermsPage.xaml with this:
-
+        <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextColor}" xml:space="preserve">
 TLDR — Quick Summary
 
 - This tool scans your PC for cheats, suspicious software, and system integrity issues
@@ -47,40 +42,52 @@ TLDR — Quick Summary
 - If you're caught cheating, that's on you — this tool just reports what it finds
 
 
-TERMS OF SERVICE — 327th Hawkbat Recording Policy
+TERMS OF SERVICE — System Integrity Check Tool
 Version 1.0 — Effective: 2026
+
 1. ACCEPTANCE
 By clicking Accept you confirm that you have read and understood these terms in full and agree to be bound by them. If you do not agree, click Decline and close the application. Continued use of this application constitutes ongoing acceptance of these terms.
+
 2. PURPOSE AND SCOPE
-The 327th Hawkbat Recording Policy tool is an integrity and compliance verification application designed for use by members and applicants of the 327th Hawkbat unit. Its sole purpose is to perform a local system check to verify that your machine is free from cheating software, unauthorised tools, and system integrity violations. This tool is required as a condition of participation in unit activities where fair play and system integrity are enforced.
+This integrity and compliance verification tool is designed to perform a local system check to verify that your machine is free from cheating software, unauthorised tools, and system integrity violations. This tool may be required as a condition of participation in activities where fair play and system integrity are enforced.
+
 3. WHAT THIS TOOL DOES
 This application performs the following checks entirely on your local machine:
 
-Scans running processes for known cheating tools, memory editors, packet editors, debuggers, and game trainers
-Verifies Windows Defender status, real-time protection, and checks for suspicious exclusion paths
-Checks system file signatures and PowerShell module integrity
-Reads registry values related to system security features such as Memory Integrity
-Logs hardware information including CPU, GPU, RAM, and Windows version for identification purposes
-Launches Process Explorer to allow a full process list review
+• Scans running processes for known cheating tools, memory editors, packet editors, debuggers, and game trainers
+• Verifies Windows Defender status, real-time protection, and checks for suspicious exclusion paths
+• Checks system file signatures and PowerShell module integrity
+• Reads registry values related to system security features such as Memory Integrity
+• Logs hardware information including CPU, GPU, RAM, and Windows version for identification purposes
+• Launches Process Explorer to allow a full process list review
 
 4. WHAT THIS TOOL DOES NOT DO
 This application does not delete, modify, move, or quarantine any files on your machine. It does not transmit any data to an external server. It does not access personal files, documents, photos, or any data outside of system integrity and process information. It does not record keystrokes, screenshots, or any form of continuous monitoring. The tool runs once per session and stops when you close it.
+
 5. DATA HANDLING AND PRIVACY
-The username you enter is converted to a SHA-256 hash immediately on input. The plaintext version of your username is never stored on disk or used beyond the current session. Scan results are saved as encrypted log files in %LocalAppData%\327TH_Hawkbat\ on your machine only. These logs are encrypted using AES-256 and cannot be read without the session key. No data is uploaded, shared, or transmitted to any party under any circumstances. Log files remain on your machine and are your responsibility to manage.
+The username you enter is converted to a SHA-256 hash immediately on input. The plaintext version of your username is never stored on disk or used beyond the current session. Scan results are saved as encrypted log files in your local application data folder on your machine only. These logs are encrypted using AES-256 and cannot be read without the session key. No data is uploaded, shared, or transmitted to any party under any circumstances. Log files remain on your machine and are your responsibility to manage.
+
 6. ADMINISTRATOR PRIVILEGES
 This application requires and will request Administrator privileges on launch. These privileges are necessary to read system security settings, check Windows Defender configuration, and verify file signatures. By accepting these terms you confirm that you are the owner of or are authorised to run administrative software on the machine you are using. Running this tool on a machine you do not own or are not authorised to administer is your sole responsibility.
+
 7. SCAN RESULTS AND CONSEQUENCES
-This tool reports findings only — it does not make decisions. Any action taken based on scan results, including removal from unit activities, is at the sole discretion of 327th Hawkbat leadership and is governed by unit rules and policies separate from this application. A FAILURE result does not automatically mean misconduct — context is always reviewed by unit staff. You are responsible for the state of your own machine. The presence of flagged software, suspicious exclusions, or integrity violations on your system is your responsibility regardless of how they got there.
+This tool reports findings only — it does not make decisions. Any action taken based on scan results is at the discretion of the organisation or community requiring the scan, and is governed by their rules and policies separate from this application. A FAILURE result does not automatically mean misconduct — context is always reviewed by the appropriate staff. You are responsible for the state of your own machine. The presence of flagged software, suspicious exclusions, or integrity violations on your system is your responsibility regardless of how they got there.
+
 8. VOLUNTARY USE
-Use of this tool may be a requirement for participation in certain unit activities. If you do not wish to run this tool, you may decline and you will not be able to proceed. No one is compelled to install or run this application outside of voluntary participation in 327th Hawkbat activities.
+Use of this tool may be a requirement for participation in certain activities. If you do not wish to run this tool, you may decline and you will not be able to proceed. No one is compelled to install or run this application outside of voluntary participation in activities that require it.
+
 9. NO WARRANTY
-This application is provided as-is without warranty of any kind. The 327th Hawkbat makes no guarantees about the completeness, accuracy, or exhaustiveness of scan results. This tool does not guarantee the detection of all cheating software or integrity violations. A clean scan result does not constitute a certification of your system's integrity.
+This application is provided as-is without warranty of any kind. No guarantees are made about the completeness, accuracy, or exhaustiveness of scan results. This tool does not guarantee the detection of all cheating software or integrity violations. A clean scan result does not constitute a certification of your system's integrity.
+
 10. LIMITATION OF LIABILITY
-The 327th Hawkbat and the developers of this application are not liable for any damage, data loss, system issues, or consequences arising from the use of this tool. You run this application at your own risk.
+The developers and distributors of this application are not liable for any damage, data loss, system issues, or consequences arising from the use of this tool. You run this application at your own risk.
+
 11. CHANGES TO THESE TERMS
 These terms may be updated with new versions of the application. Continued use of updated versions constitutes acceptance of updated terms. The version number and effective date at the top of this document identify which terms apply to the version you are running.
+
 12. CONTACT
-If you have questions about these terms or the operation of this tool, contact 327th Hawkbat leadership through your normal unit communication channels.
+If you have questions about these terms or the operation of this tool, contact the organisation or community that required you to run this scan through their normal communication channels.
+
 
 By clicking Accept you confirm you have read these terms, understand what this application does, and agree to proceed.
 
@@ -88,11 +95,11 @@ By clicking Accept you confirm you have read these terms, understand what this a
       </ScrollViewer>
 
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
-        <Button x:Name="AcceptButton" Content="Accept" Width="120" Background="{StaticResource AccentBrush}" Style="{StaticResource ActionButton}" IsEnabled="False" Click="OnAcceptClicked" />
-        <Button x:Name="DeclineButton" Content="Decline" Width="120" Background="{StaticResource DeclineBrush}" Style="{StaticResource ActionButton}" Margin="12,0,0,0" Click="OnDeclineClicked" />
+        <Button x:Name="AcceptButton" Content="Accept" Width="120" Background="{DynamicResource AccentColor}" Style="{StaticResource ActionButton}" IsEnabled="False" Click="OnAcceptClicked" />
+        <Button x:Name="DeclineButton" Content="Decline" Width="120" Background="#D13438" Style="{StaticResource ActionButton}" Margin="12,0,0,0" Click="OnDeclineClicked" />
       </StackPanel>
 
-      <TextBlock Text="Scroll to the bottom to enable Accept." Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,0" HorizontalAlignment="Center" />
+      <TextBlock Text="Scroll to the bottom to enable Accept." Foreground="{DynamicResource MutedTextBrush}" Margin="0,10,0,0" HorizontalAlignment="Center" />
     </StackPanel>
   </Grid>
 </Page>

@@ -1,0 +1,20 @@
+{
+  "name": "327th Hawkbat",
+  "subtitle": "Recording Policy",
+  "accentColor": "#3D1A6E",
+  "textColor": "#FFFFFF",
+  "backgroundColor": "#0A0A0F",
+  "hasLogo": true,
+  "requireUsername": true,
+  "version": "1.0.0",
+  "scanResults": [
+    "Files + Modules",
+    "OS Check",
+    "Memory Integrity",
+    "Windows Defender",
+    "Exclusions",
+    "Threats",
+    "Binary Sig",
+    "Process Explorer"
+  ]
+}
